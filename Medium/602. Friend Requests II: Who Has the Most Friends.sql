@@ -14,29 +14,27 @@ Write a solution to find the people who have the most friends and the most frien
 The test cases are generated so that only one person has the most friends.*/
 
 # solution
-WITH acceptance as (
+WITH cte as (
     SELECT
-        accepter_id,
-        COUNT(accepter_id) as counting
+        requester_id,
+        COUNT(*) as counting
     FROM
         RequestAccepted
     GROUP BY 1
-),
-requested as (
+        UNION ALL
     SELECT
-        requester_id,
-        COUNT(*) as req_count
+        accepter_id,
+        COUNT(*) as counting
     FROM
-        RequestAccepted r
+        RequestAccepted
     GROUP BY 1
 )
+
 SELECT
-    accepter_id as id,
-    SUM(counting) as num
+    requester_id as id,
+    SUM(COUNTING) as num
 FROM
-    (SELECT * FROM acceptance
-        UNION ALL
-    SELECT * FROM requested) A
+    cte
 GROUP BY 1
 ORDER BY 2 DESC
-LIMIT 1
+LIMIT 1;
